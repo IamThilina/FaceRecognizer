@@ -65,8 +65,6 @@ def detectGovernmentFaces(profileList):
             images.append(cv2.resize(image[y: y + h, x: x + w], (IMAGE_SIZE, IMAGE_SIZE)))
             #assign label to image
             labels.append(count)
-            #cv2.imshow("Adding faces to training set..."+ str(count), cv2.resize(image[y: y + h, x: x + w], (DISPLAY_IMAGE_SIZE, DISPLAY_IMAGE_SIZE)))
-            #cv2.waitKey(10)
 
     print "Detected " + str(len(images)) + " Faces"
     # return the images list and labels list
@@ -90,28 +88,25 @@ def mergeGovernmentAndSocialMediaProfiles(socialMediaProfileList, governmentProf
 
         if "facebook" in socialMediaProfile:
             URL = socialMediaProfile['facebook']['profile_picture']
-            image_path = cStringIO.StringIO(urllib.urlopen(URL).read())
-            social_media_image_pil = Image.open(image_path).convert('L')
-            social_media_image = np.array(social_media_image_pil, 'uint8')
-            #cv2.resize(social_media_image, (ORIGINAL_IMAGE_RESIZE,ORIGINAL_IMAGE_RESIZE))
-            faces = faceCascade.detectMultiScale(social_media_image, minSize=(SOCIAL_MEDIA_MIN_FACE_SIZE, SOCIAL_MEDIA_MIN_FACE_SIZE))
-            count = count + 1
-            for (x, y, w, h) in faces:
-                predictedGovernmentFace, confidence = recognizer.predict(cv2.resize(social_media_image[y: y + h, x: x + w], (IMAGE_SIZE,IMAGE_SIZE)))
-                #print predictedGovernmentFace
-                print "Recognized with confidence " + str(confidence)
-                #cv2.imshow("Government Face " + str(count), cv2.resize(governmentFaces[predictedGovernmentFace - 1], (DISPLAY_IMAGE_SIZE,DISPLAY_IMAGE_SIZE)))
-                #cv2.imshow("SocialMedia Face " + str(count), cv2.resize(social_media_image[y: y + h, x: x + w], (DISPLAY_IMAGE_SIZE, DISPLAY_IMAGE_SIZE)))
-                #cv2.waitKey(10)
-                temp = {
-                    'socialMedia': socialMediaProfile,
-                    'government': governmentProfileList[predictedGovernmentFace - 1]
-                }
-                mergedProfileList.append(temp)
+        else:
+            URL = socialMediaProfile['linkedIn']['profile_picture']
+
+        image_path = cStringIO.StringIO(urllib.urlopen(URL).read())
+        social_media_image_pil = Image.open(image_path).convert('L')
+        social_media_image = np.array(social_media_image_pil, 'uint8')
+        #cv2.resize(social_media_image, (ORIGINAL_IMAGE_RESIZE,ORIGINAL_IMAGE_RESIZE))
+        faces = faceCascade.detectMultiScale(social_media_image, minSize=(SOCIAL_MEDIA_MIN_FACE_SIZE, SOCIAL_MEDIA_MIN_FACE_SIZE))
+        count = count + 1
+        for (x, y, w, h) in faces:
+            predictedGovernmentFace, confidence = recognizer.predict(cv2.resize(social_media_image[y: y + h, x: x + w], (IMAGE_SIZE,IMAGE_SIZE)))
+            print "Recognized with confidence " + str(confidence)
+            temp = {
+                'socialMedia': socialMediaProfile,
+                'government': governmentProfileList[predictedGovernmentFace - 1]
+            }
+            mergedProfileList.append(temp)
 
     return mergedProfileList
-
-#raw_input('####################')
 
 '''
 if __name__ == '__main__':
