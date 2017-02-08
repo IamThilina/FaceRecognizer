@@ -11,6 +11,7 @@ DISPLAY_IMAGE_SIZE = 100 # image size of displaying windows
 ORIGINAL_IMAGE_RESIZE = 500 # resize original images to this size
 GOV_MIN_FACE_SIZE = 300 # minimum object size for government images
 SOCIAL_MEDIA_MIN_FACE_SIZE = 80 # minimum object size for social media images
+SERVER_DOMAIN = "http://localhost:3000/images/"
 
 # Path to the DataSets
 socialMediaDataSetPath = '../resources/social_media_faces'
@@ -34,7 +35,8 @@ cv2.waitKey(0)
 #######
 
 def detectGovernmentFaces(profileList):
-
+    
+    print (profileList)
     # Append all the absolute image paths in a list image_paths
     #image_paths = [os.path.join(path, f) for f in os.listdir(path)]
     # images will contains face images
@@ -47,7 +49,8 @@ def detectGovernmentFaces(profileList):
     for profile in profileList:
 
         # Read the image and convert to grayscale
-        URL = profile['NIC data']['picture']
+        URL = SERVER_DOMAIN + profile['NIC data']['picture']
+        print (URL)
         image_path = cStringIO.StringIO(urllib.urlopen(URL).read())
         image_pil = Image.open(image_path).convert('L')
         # Convert the image format into numpy array
