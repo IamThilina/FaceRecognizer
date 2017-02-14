@@ -9,8 +9,8 @@ from PIL import Image
 IMAGE_SIZE = 100 # image size of training and testing data
 DISPLAY_IMAGE_SIZE = 100 # image size of displaying windows
 ORIGINAL_IMAGE_RESIZE = 500 # resize original images to this size
-GOV_MIN_FACE_SIZE = 300 # minimum object size for government images
-SOCIAL_MEDIA_MIN_FACE_SIZE = 80 # minimum object size for social media images
+GOV_MIN_FACE_SIZE = 120 # minimum object size for government images
+SOCIAL_MEDIA_MIN_FACE_SIZE = 162 # minimum object size for social media images
 SERVER_DOMAIN = "http://localhost:3000/images/"
 
 # Path to the DataSets
@@ -49,6 +49,7 @@ def detectGovernmentFaces(profileList):
     for profile in profileList:
 
         # Read the image and convert to grayscale
+	print profile['NIC data']['picture']
         URL = SERVER_DOMAIN + profile['NIC data']['picture']
         print (URL)
         image_path = cStringIO.StringIO(urllib.urlopen(URL).read())
@@ -91,6 +92,7 @@ def mergeGovernmentAndSocialMediaProfiles(socialMediaProfileList, governmentProf
         else:
             URL = socialMediaProfile['linkedIn']['profile_picture']
 
+	print URL
         image_path = cStringIO.StringIO(urllib.urlopen(URL).read())
         social_media_image_pil = Image.open(image_path).convert('L')
         social_media_image = np.array(social_media_image_pil, 'uint8')
